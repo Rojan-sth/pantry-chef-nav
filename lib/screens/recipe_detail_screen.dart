@@ -10,16 +10,23 @@ class RecipeDetailScreen extends StatelessWidget {
   final Recipe recipe;
 
   Future<void> _startCooking(BuildContext context) async {
-    final bool finished = await Navigator.push<bool>(
+    // The result is null when the user leaves Cooking Mode early.
+    final finished = await Navigator.push<bool>(
       context,
       MaterialPageRoute(builder: (_) => CookingModeScreen(recipe: recipe)),
-    ) as bool;
+    );
 
     if (!context.mounted) return;
 
-    if (finished) {
+    if (finished == true) {
       // Send the result one more step back, to the list screen.
       Navigator.pop(context, true);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Cooking paused. Tap Start cooking to begin again.'),
+        ),
+      );
     }
   }
 
